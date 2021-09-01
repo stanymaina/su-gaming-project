@@ -11,7 +11,8 @@ using System;
 public class Board : MonoBehaviour {
     private List<Square> hovered_squares = new List<Square>(); // List squares to hover
     private Square closest_square; // Current closest square when dragging a piece
-    private int cur_theme = 0;
+    private int cur_theme = 2;
+    private int cur_level = 0;
 
     public int cur_turn = -1; // -1 = whites; 1 = blacks
     public Dictionary<int, Piece> checking_pieces = new Dictionary<int, Piece>(); // Which piece is checking the king (key = team)
@@ -37,6 +38,7 @@ public class Board : MonoBehaviour {
 
     [SerializeField]
     List<Theme> themes = new List<Theme>();
+    List<Level> levels = new List<Level>();
 
     [SerializeField]
     List<Renderer> board_sides = new List<Renderer>();
@@ -51,6 +53,7 @@ public class Board : MonoBehaviour {
     List<Piece> pieces = new List<Piece>(); // List of all pieces in the game (32)
 
     void Start() {
+        // setBoardLevel();
         setBoardTheme();
         addSquareCoordinates(); // Add "local" coordinates to all squares
         setStartPiecesCoor(); // Update all piece's coordinate
@@ -305,6 +308,12 @@ public class Board : MonoBehaviour {
             board_corners[i].material = themes[cur_theme].board_corner;
         }
     }
+    public void setBoardLevel() {
+        for (int i = 0; i < board_sides.Count ; i++) {
+            board_sides[i].material = levels[cur_level].board_side;
+            board_corners[i].material = levels[cur_level].board_corner;
+        }
+    }
 
     public void updateGameTheme(int theme) {
         cur_theme = theme;
@@ -318,5 +327,21 @@ public class Board : MonoBehaviour {
             else if (squares[i].team == 1) squares[i].GetComponent<Renderer>().material = themes[cur_theme].square_black;
             squares[i].start_mat = squares[i].GetComponent<Renderer>().material;
         }
+    }
+    
+    public void updateGameLevel(int level) {
+        cur_level = level;
+        setBoardLevel();
+        /**
+        for (int i = 0; i < pieces.Count ; i++) {
+            if (pieces[i].team == -1) setPieceLevel(pieces[i].transform, levels[cur_level].piece_white);
+            else if (pieces[i].team == 1) setPieceLevel(pieces[i].transform, levels[cur_level].piece_black);
+        }
+        for (int i = 0; i < squares.Count ; i++) {
+            if (squares[i].team == -1) squares[i].GetComponent<Renderer>().material = levels[cur_level].square_white;
+            else if (squares[i].team == 1) squares[i].GetComponent<Renderer>().material = levels[cur_level].square_black;
+            squares[i].start_mat = squares[i].GetComponent<Renderer>().material;
+        }
+        */
     }
 }
