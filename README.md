@@ -10,6 +10,7 @@ Legendary - 20 Seconds per move
 
 # The Game contains 3 Themes
 Black and White
+
 ![Game Image](https://raw.githubusercontent.com/stanymaina/su-gaming-project/master/bw-chess.png)
 
 Wooden Theme
