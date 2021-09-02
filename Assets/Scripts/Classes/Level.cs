@@ -1,20 +1,11 @@
-using UnityEngine;
-using System;
 
 /*
 ==============================
-[Theme] - Game theme class
+[Levels] - Game Levels
 ==============================
 */
-[System.Serializable]
-public class Level : System.Object {
-    public string theme_name;
-    public Material board_corner;
-    public Material board_side;
-    public Material piece_black;
-    public Material piece_white;
-    public Material square_black;
-    public Material square_white;
-    public Material square_closest;
-    public Material square_hover;
+public enum Level {
+    Easy, // This level allows upto 3 minutes between moves
+    Pro, // This level allows only 40 seconds between moves
+    Legendary, // This level allows only 20 seconds between moves
 }

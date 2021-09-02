@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -12,7 +13,8 @@ public class Board : MonoBehaviour {
     private List<Square> hovered_squares = new List<Square>(); // List squares to hover
     private Square closest_square; // Current closest square when dragging a piece
     private int cur_theme = 2;
-    private int cur_level = 0;
+    private int cur_level = 1;
+    private string level_name = "Pro";
 
     public int cur_turn = -1; // -1 = whites; 1 = blacks
     public Dictionary<int, Piece> checking_pieces = new Dictionary<int, Piece>(); // Which piece is checking the king (key = team)
@@ -20,6 +22,10 @@ public class Board : MonoBehaviour {
     // UI variables
     public bool use_hover; // Hover valid moves & closest square
     public bool rotate_camera; // Enable/disable camera rotation
+    public float timeRemaining = 40;
+    public bool timerIsRunning = false;
+    public Text timeText;
+    public Text levelText;
 
     [SerializeField]
     MainCamera main_camera;
@@ -31,10 +37,14 @@ public class Board : MonoBehaviour {
     Material square_closest_mat; // Piece's closest square material
 
     [SerializeField]
-    GameObject win_msg;
+    public Text win_msg;
+    public int level;
+    public Text level_msg;
 
     [SerializeField]
     TextMesh win_txt;
+    TextMesh level_txt;
+    // TextMesh level_txt;
 
     [SerializeField]
     List<Theme> themes = new List<Theme>();
@@ -52,11 +62,19 @@ public class Board : MonoBehaviour {
     [SerializeField]
     List<Piece> pieces = new List<Piece>(); // List of all pieces in the game (32)
 
+    [SerializeField]
+    AudioSource audioCheckmate;
+
     void Start() {
         // setBoardLevel();
+        init();
+    }
+    public void init(){
         setBoardTheme();
         addSquareCoordinates(); // Add "local" coordinates to all squares
         setStartPiecesCoor(); // Update all piece's coordinate
+        timerIsRunning = true;
+        levelText.text = string.Format(level_name);
     }
 
     /*
@@ -280,6 +298,9 @@ public class Board : MonoBehaviour {
 
     // Show check mate message
     public void doCheckMate(int loser) {
+        audioCheckmate = GetComponent<AudioSource>();
+        audioCheckmate.Play(0);
+
         string winner = (loser == 1) ? "White" : "Black";
 
         win_txt.text = winner + win_txt.text;
@@ -308,11 +329,56 @@ public class Board : MonoBehaviour {
             board_corners[i].material = themes[cur_theme].board_corner;
         }
     }
-    public void setBoardLevel() {
+    public void setBoardLevel(int game_level) {
+        switch (game_level) {
+            case 0:
+                level_name = "Easy";
+                timeRemaining = 180;
+                Start();
+                break;
+            case 1:
+                level_name = "Pro";
+                timeRemaining = 40;
+                Start();
+                break;
+            case 2:
+                level_name = "Legendary";
+                timeRemaining = 20;
+                Start();
+                break;
+        }
+        levelText.text = string.Format(level_name);
+        
+        /**
+        switch (game_level) {
+            case MoveType.StartOnly:
+                // If this piece hasn't been moved before, can move to the square or is trying to castle
+                if (!started && checkCanMove(square) && checkCastling(square)) 
+                    return true;
+                break;
+            case MoveType.Move:
+                if (checkCanMove(square)) {
+                    return true;
+                } 
+                break;
+            case MoveType.Eat:
+                if (checkCanEat(square)) 
+                    return true;
+                break;
+            case MoveType.EatMove:
+            case MoveType.EatMoveJump:
+                if (checkCanEatMove(square)) {
+                    return true;
+                }
+                break;
+        }
+        **/
+        Debug.Log("Level has changed to " + level_name + "!");
+        /**
         for (int i = 0; i < board_sides.Count ; i++) {
             board_sides[i].material = levels[cur_level].board_side;
             board_corners[i].material = levels[cur_level].board_corner;
-        }
+        }**/
     }
 
     public void updateGameTheme(int theme) {
@@ -331,7 +397,9 @@ public class Board : MonoBehaviour {
     
     public void updateGameLevel(int level) {
         cur_level = level;
-        setBoardLevel();
+
+        setBoardLevel(cur_level);
+        
         /**
         for (int i = 0; i < pieces.Count ; i++) {
             if (pieces[i].team == -1) setPieceLevel(pieces[i].transform, levels[cur_level].piece_white);
@@ -343,5 +411,52 @@ public class Board : MonoBehaviour {
             squares[i].start_mat = squares[i].GetComponent<Renderer>().material;
         }
         */
+    }
+    void Update()
+    {
+        if (timerIsRunning)
+        {
+            if (timeRemaining > 0)
+            {
+                timeRemaining -= Time.deltaTime;
+                DisplayTime(timeRemaining);
+            }
+            else
+            {
+                Debug.Log("Time has run out!");
+                
+                switch (cur_level) {
+                    case 0:
+                        timeRemaining = 180;
+                        changeTurn();
+                        break;
+                    case 1:
+                        timeRemaining = 40;
+                        changeTurn();
+                        break;
+                    case 2:
+                        timeRemaining = 20;
+                        changeTurn();
+                        break;
+                }
+                // timerIsRunning = true;
+            }
+        }
+    }
+    void DisplayTime(float timeToDisplay)
+    {
+        timeToDisplay += 1;
+
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60); 
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+
+        timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+    
+    public void RestartGame() {
+        setBoardTheme();
+        addSquareCoordinates(); // Add "local" coordinates to all squares
+        setStartPiecesCoor();
+        // SceneManager.LoadScene(SceneManager.GetActiveScene().name); // loads current scene
     }
 }

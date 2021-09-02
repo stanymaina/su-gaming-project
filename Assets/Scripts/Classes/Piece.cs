@@ -27,6 +27,8 @@ public class Piece : MonoBehaviour {
     [SerializeField]
     public List<Piece> castling_towers;
 
+    [SerializeField]
+
     void Start() {
         // Initialize valid moves
         switch (piece_name) {
