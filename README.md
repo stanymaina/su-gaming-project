@@ -5,7 +5,9 @@ This game is open source and has been prepared for presentation for the BBIT Cou
 
 # The Game contains 3 Levels
 Beginner - 3 Minutes per move
+
 Pro - 40 Seconds per move
+
 Legendary - 20 Seconds per move
 
 # The Game contains 3 Themes
@@ -23,9 +25,11 @@ Brick Theme
 
 # Ad-ons
 Game tutorials through hover guidance
+
 Game rotation while taking turns
 
 # Coming Soon
 Network Gaming
+
 Online Gaming
 
