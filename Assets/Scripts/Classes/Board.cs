@@ -334,17 +334,17 @@ public class Board : MonoBehaviour {
             case 0:
                 level_name = "Easy";
                 timeRemaining = 180;
-                Start();
+                init();
                 break;
             case 1:
                 level_name = "Pro";
                 timeRemaining = 40;
-                Start();
+                init();
                 break;
             case 2:
                 level_name = "Legendary";
                 timeRemaining = 20;
-                Start();
+                init();
                 break;
         }
         levelText.text = string.Format(level_name);
